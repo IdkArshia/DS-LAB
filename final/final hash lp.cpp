@@ -1,0 +1,131 @@
+#include <iostream>
+using namespace std;
+
+const int size = 7;
+
+class Entry {
+public:
+    int key;
+    string value;
+
+    Entry() {
+        key = -1;       // -1 means EMPTY
+        value = "";
+    }
+
+    Entry(int k, string v) {
+        key = k;
+        value = v;
+    }
+};
+
+class hashTable {
+public:
+    Entry table[size];
+
+    int hashF(int key) {
+        return key % size;
+    }
+
+    void insert(int key, string value) {
+        int index = hashF(key);
+
+        // Direct insert if empty
+        if (table[index].key == -1) {
+            table[index] = Entry(key, value);
+            return;
+        }
+
+        // Linear probing
+        int i = (index + 1) % size;
+        while (i != index) {
+            if (table[i].key == -1) {
+                table[i] = Entry(key, value);
+                return;
+            }
+            i = (i + 1) % size;
+        }
+
+        cout << "Hash Table is Full\n";
+    }
+
+    void del(int key) {
+        int index = hashF(key);
+
+        if (table[index].key == key) {
+            table[index].key = -1;
+            table[index].value = "";
+            cout << "Key deleted\n";
+            return;
+        }
+
+        int i = (index + 1) % size;
+        while (i != index) {
+            if (table[i].key == key) {
+                table[i].key = -1;
+                table[i].value = "";
+                cout << "Key deleted\n";
+                return;
+            }
+            if (table[i].key == -1)
+                break;
+
+            i = (i + 1) % size;
+        }
+
+        cout << "Key not found\n";
+    }
+
+    void search(int key) {
+        int index = hashF(key);
+
+        if (table[index].key == key) {
+            cout << "Found: " << table[index].value << endl;
+            return;
+        }
+
+        int i = (index + 1) % size;
+        while (i != index) {
+            if (table[i].key == key) {
+                cout << "Found: " << table[i].value << endl;
+                return;
+            }
+
+            if (table[i].key == -1)
+                break;
+
+            i = (i + 1) % size;
+        }
+
+        cout << "Key not found\n";
+    }
+
+    void display() {
+        for (int i = 0; i < size; i++) {
+            if (table[i].key == -1)
+                cout << i << ": EMPTY\n";
+            else
+                cout << i << ": " << table[i].key
+                     << " -> " << table[i].value << endl;
+        }
+    }
+};
+
+int main() {
+    hashTable h;
+
+    h.insert(2, "Arshia");
+    h.insert(9, "Is");
+    h.insert(16, "Gonna");
+    h.insert(23, "Ace");
+    h.insert(30, "This");
+
+    h.display();
+
+    cout << endl;
+    h.search(16);
+
+    cout << endl;
+    h.del(9);
+    h.display();
+}
